@@ -1,0 +1,5 @@
+local guiModule = require(
+    game.ReplicatedStorage:WaitForChild("SAD_FACE_GUI")
+)
+
+guiModule()
