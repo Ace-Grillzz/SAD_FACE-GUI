@@ -1,0 +1,337 @@
+
+-- SAD :( FACE GUI
+-- Mobile + PC
+-- ModuleScript
+
+return function()
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Colors
+local WHITE = Color3.fromRGB(255,255,255)
+local GREY = Color3.fromRGB(225,225,225)
+local ACTIVE = Color3.fromRGB(190,190,190)
+local BLACK = Color3.fromRGB(0,0,0)
+
+-- Remove previous GUI
+local old = playerGui:FindFirstChild("SAD_FACE_GUI")
+if old then old:Destroy() end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "SAD_FACE_GUI"
+gui.ResetOnSpawn = false
+gui.Parent = playerGui
+
+-- Main window
+local main = Instance.new("Frame")
+main.Name = "Main"
+main.Size = UDim2.new(0.92,0,0.78,0)
+main.Position = UDim2.new(0.04,0,0.11,0)
+main.BackgroundColor3 = WHITE
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+main.Parent = gui
+
+Instance.new("UICorner",main).CornerRadius =
+    UDim.new(0,5)
+
+-- Header
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1,0,0,52)
+header.BackgroundColor3 = WHITE
+header.BorderSizePixel = 0
+header.Parent = main
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-55,1,0)
+title.Position = UDim2.fromOffset(10,0)
+title.BackgroundTransparency = 1
+title.Text = "SAD :( FACE"
+title.TextColor3 = BLACK
+title.TextSize = 21
+title.Font = Enum.Font.GothamBold
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = header
+
+local minimize = Instance.new("TextButton")
+minimize.Size = UDim2.fromOffset(48,48)
+minimize.Position = UDim2.new(1,-50,0,2)
+minimize.BackgroundColor3 = GREY
+minimize.Text = "−"
+minimize.TextColor3 = BLACK
+minimize.TextSize = 27
+minimize.Font = Enum.Font.GothamBold
+minimize.Parent = header
+
+-- Navigation
+local nav = Instance.new("Frame")
+nav.Position = UDim2.fromOffset(0,53)
+nav.Size = UDim2.new(1,0,0,48)
+nav.BackgroundColor3 = GREY
+nav.Parent = main
+
+local categories = {
+    "All",
+    "Movement",
+    "Visuals",
+    "Fun",
+    "Settings"
+}
+
+local categoryIndex = 1
+
+local function makeButton(parent,text,size,pos)
+    local b = Instance.new("TextButton")
+    b.Size = size
+    b.Position = pos
+    b.BackgroundColor3 = GREY
+    b.Text = text
+    b.TextColor3 = BLACK
+    b.TextSize = 20
+    b.Font = Enum.Font.GothamBold
+    b.Parent = parent
+    return b
+end
+
+local left = makeButton(
+    nav,"<",
+    UDim2.new(0,65,1,0),
+    UDim2.new(0,0,0,0)
+)
+
+local right = makeButton(
+    nav,">",
+    UDim2.new(0,65,1,0),
+    UDim2.new(1,-65,0,0)
+)
+
+local categoryLabel = Instance.new("TextLabel")
+categoryLabel.Size = UDim2.new(1,-130,1,0)
+categoryLabel.Position = UDim2.fromOffset(65,0)
+categoryLabel.BackgroundTransparency = 1
+categoryLabel.Text = "All"
+categoryLabel.TextColor3 = BLACK
+categoryLabel.TextSize = 21
+categoryLabel.Font = Enum.Font.GothamBold
+categoryLabel.Parent = nav
+
+-- Scrolling menu
+local scroll = Instance.new("ScrollingFrame")
+scroll.Position = UDim2.fromOffset(7,105)
+scroll.Size = UDim2.new(1,-14,1,-158)
+scroll.BackgroundColor3 = WHITE
+scroll.BackgroundTransparency = 0
+scroll.BorderSizePixel = 0
+scroll.ScrollBarThickness = 7
+scroll.ScrollBarImageColor3 = ACTIVE
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.Parent = main
+
+local grid = Instance.new("UIGridLayout")
+grid.CellSize = UDim2.new(0.25,-7,0,69)
+grid.CellPadding = UDim2.fromOffset(7,7)
+grid.Parent = scroll
+
+local function getHumanoid()
+    local character = player.Character
+    return character and character:FindFirstChildOfClass("Humanoid")
+end
+
+-- Create menu buttons
+local function addButton(name,category,callback,demo)
+    local b = Instance.new("TextButton")
+    b.Name = name
+    b.BackgroundColor3 = GREY
+    b.BorderSizePixel = 0
+    b.Text = name
+    b.TextColor3 = BLACK
+    b.TextSize = 15
+    b.TextWrapped = true
+    b.Font = Enum.Font.GothamBold
+    b.Parent = scroll
+
+    Instance.new("UICorner",b).CornerRadius =
+        UDim.new(0,3)
+
+    local enabled = false
+
+    b.Activated:Connect(function()
+        if callback then
+            callback()
+        elseif demo then
+            enabled = not enabled
+            b.BackgroundColor3 =
+                enabled and ACTIVE or GREY
+            b.Text = name ..
+                (enabled and " [ON]" or " [OFF]")
+        end
+    end)
+
+    b:SetAttribute("Category",category)
+    return b
+end
+
+-- ALL BUTTONS
+
+addButton("Server Hop","Fun",nil,true)
+addButton("Invisible","Visuals",nil,true)
+addButton("Scare Closest Player","Fun",nil,true)
+addButton("Orbit All Nearby Parts","Fun",nil,true)
+
+addButton("INF JUMP","Movement",function()
+    local h = getHumanoid()
+    if h then
+        h.UseJumpPower = true
+        h.JumpPower = 100
+    end
+end)
+
+addButton("No-Clip","Movement",nil,true)
+addButton("Spin Bot","Fun",nil,true)
+addButton("Fling GUI","Fun",nil,true)
+
+addButton("Chat Unbanner","Fun",nil,true)
+addButton("PART ORBIT","Fun",nil,true)
+
+addButton("JumpUp","Movement",function()
+    local h = getHumanoid()
+    if h then h.Jump = true end
+end)
+
+addButton("SimpleSpy","Visuals",nil,true)
+addButton("DANCE","Fun",nil,true)
+addButton("Hat Script","Fun",nil,true)
+addButton("Bind Key","Settings",nil,true)
+
+addButton("JumpPower Slider","Movement",function()
+    local h = getHumanoid()
+    if h then
+        h.JumpPower = math.clamp(
+            h.JumpPower + 10,50,100
+        )
+    end
+end)
+
+addButton("HatHub","Fun",nil,true)
+addButton("Fly","Movement",nil,true)
+addButton("JOHN DOE","Visuals",nil,true)
+
+addButton("Sit","Fun",function()
+    local h = getHumanoid()
+    if h then h.Sit = true end
+end)
+
+addButton("Speed +5","Movement",function()
+    local h = getHumanoid()
+    if h then
+        h.WalkSpeed = math.clamp(
+            h.WalkSpeed + 5,16,50
+        )
+    end
+end)
+
+addButton("Reset Movement","Settings",function()
+    local h = getHumanoid()
+    if h then
+        h.WalkSpeed = 16
+        h.JumpPower = 50
+    end
+end)
+
+-- Category navigation
+local function updateCategory()
+    categoryLabel.Text = categories[categoryIndex]
+
+    for _,item in ipairs(scroll:GetChildren()) do
+        if item:IsA("TextButton") then
+            local cat = item:GetAttribute("Category")
+            item.Visible =
+                categoryIndex == 1 or
+                cat == categories[categoryIndex]
+        end
+    end
+
+    scroll.CanvasPosition = Vector2.new(0,0)
+end
+
+left.Activated:Connect(function()
+    categoryIndex -= 1
+    if categoryIndex < 1 then
+        categoryIndex = #categories
+    end
+    updateCategory()
+end)
+
+right.Activated:Connect(function()
+    categoryIndex += 1
+    if categoryIndex > #categories then
+        categoryIndex = 1
+    end
+    updateCategory()
+end)
+
+-- Close button
+local close = makeButton(
+    main,
+    "Close",
+    UDim2.new(1,0,0,49),
+    UDim2.new(0,0,1,-49)
+)
+
+close.Activated:Connect(function()
+    main.Visible = false
+    open.Visible = true
+end)
+
+-- Reopen button
+local open = makeButton(
+    gui,
+    "SAD FACE",
+    UDim2.fromOffset(100,45),
+    UDim2.new(0,12,0.5,0)
+)
+
+open.Visible = false
+
+open.Activated:Connect(function()
+    main.Visible = true
+    open.Visible = false
+end)
+
+-- Minimize
+local minimized = false
+
+minimize.Activated:Connect(function()
+    minimized = not minimized
+
+    nav.Visible = not minimized
+    scroll.Visible = not minimized
+    close.Visible = not minimized
+
+    main.Size = minimized
+        and UDim2.new(0.92,0,0,52)
+        or UDim2.new(0.92,0,0.78,0)
+
+    minimize.Text = minimized and "+" or "−"
+end)
+
+-- Keyboard support
+UIS.InputBegan:Connect(function(input,processed)
+    if processed then return end
+
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        main.Visible = not main.Visible
+        open.Visible = not main.Visible
+    end
+end)
+
+updateCategory()
+
+print("SAD :( FACE successfully loaded!")
+
+end
