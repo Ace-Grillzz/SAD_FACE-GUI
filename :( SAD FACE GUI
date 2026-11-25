@@ -1,0 +1,142 @@
+
+-- :( SAD_FACE MOBILE + PC
+-- Place in StarterPlayer > StarterPlayerScripts
+-- LocalScript
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "finbar88GUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main window
+local main = Instance.new("Frame")
+main.Size = UDim2.new(0, 320, 0, 390)
+main.Position = UDim2.new(0.5, -160, 0.5, -195)
+main.BackgroundColor3 = Color3.fromRGB(13, 13, 25)
+main.Active = true
+main.Draggable = true
+main.Parent = gui
+
+Instance.new("UICorner", main).CornerRadius = UDim.new(0, 12)
+
+-- Open button
+local open = Instance.new("TextButton")
+open.Size = UDim2.fromOffset(65, 50)
+open.Position = UDim2.new(0, 15, 0.5, -25)
+open.Text = "OPEN"
+open.TextColor3 = Color3.new(1,1,1)
+open.BackgroundColor3 = Color3.fromRGB(0, 130, 200)
+open.TextSize = 15
+open.Font = Enum.Font.GothamBold
+open.Parent = gui
+Instance.new("UICorner", open).CornerRadius = UDim.new(0, 10)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 48)
+title.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+title.Text = "finbar88GUI MOBILE"
+title.TextColor3 = Color3.fromRGB(0, 200, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 17
+title.Parent = main
+
+local scroll = Instance.new("ScrollingFrame")
+scroll.Position = UDim2.fromOffset(10, 58)
+scroll.Size = UDim2.new(1, -20, 1, -68)
+scroll.BackgroundTransparency = 1
+scroll.BorderSizePixel = 0
+scroll.ScrollBarThickness = 5
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.CanvasSize = UDim2.new()
+scroll.Parent = main
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 8)
+layout.Parent = scroll
+
+local function button(name, callback)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(1, -5, 0, 45)
+    b.BackgroundColor3 = Color3.fromRGB(30, 40, 60)
+    b.TextColor3 = Color3.new(1,1,1)
+    b.Text = name
+    b.Font = Enum.Font.GothamBold
+    b.TextSize = 15
+    b.Parent = scroll
+
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+
+    b.Activated:Connect(callback)
+    return b
+end
+
+local function humanoid()
+    local char = player.Character
+    return char and char:FindFirstChildOfClass("Humanoid")
+end
+
+local function toggle(name)
+    local enabled = false
+    local b
+
+    b = button(name .. " : OFF", function()
+        enabled = not enabled
+        b.Text = name .. (enabled and " : ON" or " : OFF")
+        b.BackgroundColor3 = enabled
+            and Color3.fromRGB(0, 120, 160)
+            or Color3.fromRGB(30, 40, 60)
+    end)
+end
+
+toggle("ESP Demo")
+toggle("Aimbot Demo")
+toggle("Fly Demo")
+toggle("Noclip Demo")
+
+button("Speed +5", function()
+    local h = humanoid()
+    if h then
+        h.WalkSpeed = math.clamp(h.WalkSpeed + 5, 16, 50)
+    end
+end)
+
+button("Jump +10", function()
+    local h = humanoid()
+    if h then
+        h.JumpPower = math.clamp(h.JumpPower + 10, 50, 100)
+    end
+end)
+
+button("Reset Movement", function()
+    local h = humanoid()
+    if h then
+        h.WalkSpeed = 16
+        h.JumpPower = 50
+    end
+end)
+
+button("CLOSE MENU", function()
+    main.Visible = false
+    open.Visible = true
+end)
+
+open.Activated:Connect(function()
+    main.Visible = true
+    open.Visible = false
+end)
+
+UIS.InputBegan:Connect(function(input, processed)
+    if processed then return end
+
+    if input.KeyCode == Enum.KeyCode.RightShift then
+        main.Visible = not main.Visible
+        open.Visible = not main.Visible
+    end
+end)
+
+open.Visible = false
